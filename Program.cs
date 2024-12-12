@@ -68,7 +68,7 @@ public class EnableDetailedErrorsSqlServerBenchmarks
             .UseSqlServer(msSqlContainer.GetConnectionString())
             .Options;
         using var db = new BenchmarkDbContext(options);
-        var allCustomers = db.Customers.ToListAsync();
+        var allCustomers = await db.Customers.ToListAsync();
     }
 
 }

@@ -10,6 +10,7 @@ This uses [TestContainers](https://testcontainers.com/) to launch SQL Server.  A
 
 ## Results:
 ```
+
 BenchmarkDotNet v0.14.0, macOS Sonoma 14.2.1 (23C71) [Darwin 23.2.0]
 Apple M1 Max, 1 CPU, 10 logical and 10 physical cores
 .NET SDK 9.0.100
@@ -18,11 +19,11 @@ Apple M1 Max, 1 CPU, 10 logical and 10 physical cores
 
 
 ```
-| Method                           | NumberOfRows | Mean        | Error     | StdDev      | Median      |
-|--------------------------------- |------------- |------------:|----------:|------------:|------------:|
-| **QueryWithEnableDetailedErrors**    | **10**           |    **759.2 μs** |  **14.47 μs** |    **14.21 μs** |    **757.2 μs** |
-| QueryWithoutEnableDetailedErrors | 10           |    124.2 μs |   2.70 μs |     7.78 μs |    123.3 μs |
-| **QueryWithEnableDetailedErrors**    | **1000**         |  **2,432.8 μs** |  **48.16 μs** |   **132.64 μs** |  **2,402.4 μs** |
-| QueryWithoutEnableDetailedErrors | 1000         |    117.9 μs |   2.14 μs |     4.83 μs |    116.0 μs |
-| **QueryWithEnableDetailedErrors**    | **10000**        | **25,883.5 μs** | **477.76 μs** | **1,048.71 μs** | **25,518.5 μs** |
-| QueryWithoutEnableDetailedErrors | 10000        |    140.9 μs |   2.81 μs |     6.28 μs |    138.7 μs |
+| Method                           | NumberOfRows | Mean        | Error     | StdDev    | Median      |
+|--------------------------------- |------------- |------------:|----------:|----------:|------------:|
+| **QueryWithEnableDetailedErrors**    | **10**           |    **761.4 μs** |  **14.67 μs** |  **16.30 μs** |    **755.3 μs** |
+| QueryWithoutEnableDetailedErrors | 10           |    751.7 μs |  14.06 μs |  12.46 μs |    755.0 μs |
+| **QueryWithEnableDetailedErrors**    | **1000**         |  **2,411.1 μs** |  **43.63 μs** |  **81.96 μs** |  **2,389.6 μs** |
+| QueryWithoutEnableDetailedErrors | 1000         |  2,380.7 μs |  47.38 μs | 125.66 μs |  2,333.3 μs |
+| **QueryWithEnableDetailedErrors**    | **10000**        | **26,925.7 μs** | **522.73 μs** | **697.83 μs** | **27,012.7 μs** |
+| QueryWithoutEnableDetailedErrors | 10000        | 27,085.7 μs | 529.46 μs | 724.73 μs | 26,751.9 μs |
