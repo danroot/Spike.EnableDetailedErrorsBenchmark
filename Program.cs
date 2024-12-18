@@ -9,6 +9,7 @@ using Testcontainers.MsSql;
  var summary = BenchmarkRunner.Run<EnableDetailedErrorsSqlServerBenchmarks>();
 
 
+[MemoryDiagnoser]
 public class EnableDetailedErrorsSqlServerBenchmarks
 {
 
@@ -16,6 +17,9 @@ public class EnableDetailedErrorsSqlServerBenchmarks
       .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
       .WithWaitStrategy(Wait.ForUnixContainer().UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;"))
       .Build();
+
+    private DbContextOptions<BenchmarkDbContext> optionsWithoutDetailedErrors;
+    private DbContextOptions<BenchmarkDbContext> optionsWithDetailedErrors;
 
     [GlobalSetup]
     public async Task GlobalSetup()
@@ -38,6 +42,17 @@ public class EnableDetailedErrorsSqlServerBenchmarks
 
         await db.SaveChangesAsync();
 
+        var optionsBuilderWithDetailedErrors = new DbContextOptionsBuilder<BenchmarkDbContext>();
+        this.optionsWithDetailedErrors = optionsBuilderWithDetailedErrors
+            .UseSqlServer(msSqlContainer.GetConnectionString())
+            .EnableDetailedErrors()
+            .Options;
+
+        var optionsBuilderWithoutDetailedErrors = new DbContextOptionsBuilder<BenchmarkDbContext>();
+        this.optionsWithoutDetailedErrors = optionsBuilderWithoutDetailedErrors
+            .UseSqlServer(msSqlContainer.GetConnectionString())
+            .Options;
+
     }
 
     [GlobalCleanup]
@@ -51,23 +66,14 @@ public class EnableDetailedErrorsSqlServerBenchmarks
 
     [Benchmark]
     public async Task QueryWithEnableDetailedErrors()
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<BenchmarkDbContext>();
-        var options = optionsBuilder
-            .UseSqlServer(msSqlContainer.GetConnectionString())
-            .EnableDetailedErrors()
-            .Options;
-        using var db = new BenchmarkDbContext(options);
+    {       
+        using var db = new BenchmarkDbContext(this.optionsWithDetailedErrors);
         var allCustomers = await db.Customers.ToListAsync();
     }
     [Benchmark]
     public async Task QueryWithoutEnableDetailedErrors()
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<BenchmarkDbContext>();
-        var options = optionsBuilder
-            .UseSqlServer(msSqlContainer.GetConnectionString())
-            .Options;
-        using var db = new BenchmarkDbContext(options);
+    {      
+        using var db = new BenchmarkDbContext(this.optionsWithoutDetailedErrors);
         var allCustomers = await db.Customers.ToListAsync();
     }
 
