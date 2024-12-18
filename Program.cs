@@ -4,9 +4,10 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Testcontainers.MsSql;
 
- var summary = BenchmarkRunner.Run<EnableDetailedErrorsSqlServerBenchmarks>();
+var summary = BenchmarkRunner.Run<EnableDetailedErrorsSqlServerBenchmarks>();
 
 
 [MemoryDiagnoser]
@@ -20,6 +21,9 @@ public class EnableDetailedErrorsSqlServerBenchmarks
 
     private DbContextOptions<BenchmarkDbContext> optionsWithoutDetailedErrors;
     private DbContextOptions<BenchmarkDbContext> optionsWithDetailedErrors;
+
+    private PooledDbContextFactory<BenchmarkDbContext> poolWithoutDetailedErrors;
+    private PooledDbContextFactory<BenchmarkDbContext> poolWithDetailedErrors;
 
     [GlobalSetup]
     public async Task GlobalSetup()
@@ -47,18 +51,21 @@ public class EnableDetailedErrorsSqlServerBenchmarks
             .UseSqlServer(msSqlContainer.GetConnectionString())
             .EnableDetailedErrors()
             .Options;
+        this.poolWithDetailedErrors = new PooledDbContextFactory<BenchmarkDbContext>(optionsWithDetailedErrors);
+        
 
         var optionsBuilderWithoutDetailedErrors = new DbContextOptionsBuilder<BenchmarkDbContext>();
         this.optionsWithoutDetailedErrors = optionsBuilderWithoutDetailedErrors
             .UseSqlServer(msSqlContainer.GetConnectionString())
             .Options;
+        this.poolWithoutDetailedErrors = new PooledDbContextFactory<BenchmarkDbContext>(optionsWithoutDetailedErrors);
 
     }
 
     [GlobalCleanup]
     public async Task GlobalCleanup()
     {
-        await msSqlContainer.DisposeAsync();
+        await msSqlContainer.DisposeAsync();        
     }
    
     [Params(10, 1000, 10000)]
@@ -67,13 +74,13 @@ public class EnableDetailedErrorsSqlServerBenchmarks
     [Benchmark]
     public async Task QueryWithEnableDetailedErrors()
     {       
-        using var db = new BenchmarkDbContext(this.optionsWithDetailedErrors);
+        using var db = await this.poolWithDetailedErrors.CreateDbContextAsync();
         var allCustomers = await db.Customers.ToListAsync();
     }
     [Benchmark]
     public async Task QueryWithoutEnableDetailedErrors()
     {      
-        using var db = new BenchmarkDbContext(this.optionsWithoutDetailedErrors);
+        using var db =  await this.poolWithoutDetailedErrors.CreateDbContextAsync();
         var allCustomers = await db.Customers.ToListAsync();
     }
 

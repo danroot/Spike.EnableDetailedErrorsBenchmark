@@ -12,17 +12,18 @@ This uses [TestContainers](https://testcontainers.com/) to launch SQL Server.  A
 ```
 
 BenchmarkDotNet v0.14.0, macOS Sonoma 14.2.1 (23C71) [Darwin 23.2.0]
+Apple M1 Max, 1 CPU, 10 logical and 10 physical cores
 .NET SDK 9.0.100
   [Host]     : .NET 9.0.0 (9.0.24.52809), Arm64 RyuJIT AdvSIMD
   DefaultJob : .NET 9.0.0 (9.0.24.52809), Arm64 RyuJIT AdvSIMD
 
 
 ```
-| Method                           | NumberOfRows | Mean        | Error     | StdDev    | Median      | Gen0      | Gen1      | Gen2     | Allocated  |
-|--------------------------------- |------------- |------------:|----------:|----------:|------------:|----------:|----------:|---------:|-----------:|
-| **QueryWithEnableDetailedErrors**    | **10**           |    **875.5 μs** |  **43.67 μs** | **127.40 μs** |    **819.0 μs** |   **13.6719** |         **-** |        **-** |   **83.69 KB** |
-| QueryWithoutEnableDetailedErrors | 10           |    777.0 μs |  14.24 μs |  32.14 μs |    766.0 μs |   13.6719 |         - |        - |   90.49 KB |
-| **QueryWithEnableDetailedErrors**    | **1000**         |  **2,541.1 μs** |  **49.48 μs** | **119.50 μs** |  **2,495.6 μs** |  **218.7500** |  **101.5625** |        **-** | **1352.99 KB** |
-| QueryWithoutEnableDetailedErrors | 1000         |  2,338.4 μs |  42.02 μs |  35.08 μs |  2,332.7 μs |  218.7500 |  105.4688 |        - | 1359.81 KB |
-| **QueryWithEnableDetailedErrors**    | **10000**        | **26,644.7 μs** | **501.31 μs** | **823.66 μs** | **26,346.7 μs** | **2266.6667** | **1000.0000** | **400.0000** | **13007.7 KB** |
-| QueryWithoutEnableDetailedErrors | 10000        | 27,101.8 μs | 502.74 μs | 721.02 μs | 26,812.7 μs | 2281.2500 | 1093.7500 | 437.5000 | 13013.4 KB |
+| Method                           | NumberOfRows | Mean        | Error     | StdDev      | Median      | Gen0      | Gen1     | Gen2     | Allocated   |
+|--------------------------------- |------------- |------------:|----------:|------------:|------------:|----------:|---------:|---------:|------------:|
+| **QueryWithEnableDetailedErrors**    | **10**           |    **753.1 μs** |  **39.10 μs** |   **114.06 μs** |    **714.8 μs** |    **2.9297** |        **-** |        **-** |    **19.99 KB** |
+| QueryWithoutEnableDetailedErrors | 10           |    721.4 μs |  25.04 μs |    72.24 μs |    700.8 μs |    1.9531 |        - |        - |    19.87 KB |
+| **QueryWithEnableDetailedErrors**    | **1000**         |  **2,315.4 μs** |  **65.92 μs** |   **193.32 μs** |  **2,258.6 μs** |  **191.4063** |  **62.5000** |        **-** |  **1189.73 KB** |
+| QueryWithoutEnableDetailedErrors | 1000         |  2,437.9 μs |  73.21 μs |   212.39 μs |  2,342.0 μs |  191.4063 |  62.5000 |        - |  1189.61 KB |
+| **QueryWithEnableDetailedErrors**    | **10000**        | **25,745.1 μs** | **508.36 μs** |   **890.35 μs** | **25,346.5 μs** | **2062.5000** | **906.2500** | **281.2500** | **12017.91 KB** |
+| QueryWithoutEnableDetailedErrors | 10000        | 26,711.4 μs | 531.04 μs | 1,435.69 μs | 26,383.3 μs | 2062.5000 | 906.2500 | 281.2500 | 12017.19 KB |
