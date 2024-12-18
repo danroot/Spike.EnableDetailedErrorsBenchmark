@@ -9,6 +9,7 @@ This uses [TestContainers](https://testcontainers.com/) to launch SQL Server.  A
 `dotnet run -c Release`
 
 On MacOS, you may need to run with 'sudo' to allow priority threads, otherwise there will be a warning from BenchmarkDotNet:
+
 `sudo dotnet run -c Release`
 
 
