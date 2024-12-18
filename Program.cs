@@ -31,8 +31,10 @@ public class EnableDetailedErrorsSqlServerBenchmarks
         await msSqlContainer.StartAsync();
         var optionsBuilder = new DbContextOptionsBuilder<BenchmarkDbContext>();
         var options = optionsBuilder.UseSqlServer(msSqlContainer.GetConnectionString()).Options;
-        using var db = new BenchmarkDbContext(options);
+
+        using var db = new BenchmarkDbContext(options);        
         await db.Database.EnsureCreatedAsync();
+
         for (var i = 0; i < NumberOfRows; i++)
             await db.AddAsync(new Customer
             {
@@ -45,7 +47,8 @@ public class EnableDetailedErrorsSqlServerBenchmarks
             });
 
         await db.SaveChangesAsync();
-
+        var count = await db.Customers.CountAsync();
+        Console.WriteLine($"//Created db with {count} customers  ");
         var optionsBuilderWithDetailedErrors = new DbContextOptionsBuilder<BenchmarkDbContext>();
         this.optionsWithDetailedErrors = optionsBuilderWithDetailedErrors
             .UseSqlServer(msSqlContainer.GetConnectionString())
@@ -76,12 +79,14 @@ public class EnableDetailedErrorsSqlServerBenchmarks
     {       
         using var db = await this.poolWithDetailedErrors.CreateDbContextAsync();
         var allCustomers = await db.Customers.ToListAsync();
+        if (allCustomers.Count != NumberOfRows) throw new InvalidOperationException($"Invalid Benchmark: Customer count is {allCustomers.Count}, not {NumberOfRows} as expected.");
     }
     [Benchmark]
     public async Task QueryWithoutEnableDetailedErrors()
     {      
-        using var db =  await this.poolWithoutDetailedErrors.CreateDbContextAsync();
+        using var db =  await this.poolWithoutDetailedErrors.CreateDbContextAsync();      
         var allCustomers = await db.Customers.ToListAsync();
+        if (allCustomers.Count != NumberOfRows) throw new InvalidOperationException($"Invalid Benchmark: Customer count is {allCustomers.Count}, not {NumberOfRows} as expected.");
     }
 
 }
